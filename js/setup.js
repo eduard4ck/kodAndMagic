@@ -37,15 +37,27 @@ const eyeColors = [
   `green`
 ];
 
+const fireballColors = [
+  `#ee4830`,
+  `#30a8ee`,
+  `#5ce6c0`,
+  `#e848d5`,
+  `#e6e848`
+];
+
 const players = [];
 (function createPlayers() { // получаем массив объектов рандомных игроков, для константы строкой выше
+  let localCoatColors = coatColors.concat();
+  let localEyeColors = eyeColors.concat();
   for (let i = 0; i < 4; i++) {
     let obj = {};
     obj.name = generateName(names, lastNames);
-    obj.coatColor = getRandomElement(coatColors);
-    obj.eyesColor = getRandomElement(eyeColors);
+    obj.coatColor = getRandomElement(localCoatColors);
+    obj.eyesColor = getRandomElement(localEyeColors);
     players.push(obj);
   }
+  localCoatColors = ``;
+  localEyeColors = ``;
 }());
 
 function generateName(namesArray, lastNamesArray) { // сгенерировать имя с фамилией
@@ -60,8 +72,7 @@ function generateName(namesArray, lastNamesArray) { // сгенерироват�
   }
 
   let toggle = getRandomInt(0, 2);
-  let fullName;
-  toggle ? fullName = name + ` ` + lastName : fullName = lastName + ` ` + name;
+  let fullName = toggle ? name + ` ` + lastName : lastName + ` ` + name;
   return fullName;
 }
 
@@ -74,11 +85,10 @@ function getRandomElement(colorsArray) { // получить рандомный 
 
 
 let wizardTemplate = document.querySelector(`#similar-wizard-template`).content.querySelector(`.setup-similar-item`);
-let overlay = document.querySelector(`.overlay`);
 let similarWizards = document.querySelector(`.setup-similar`);
 let setupSimilarList = similarWizards.querySelector(`.setup-similar-list`);
 
-(function addSimilarPlayers() {
+(function addSimilarPlayers() { // добавляем похожих игроков в блок с другими игроками
   let fragment = document.createDocumentFragment();
   for (let i = 0; i < players.length; i++) {
     let newWizard = wizardTemplate.cloneNode(true);
@@ -92,10 +102,105 @@ let setupSimilarList = similarWizards.querySelector(`.setup-similar-list`);
   setupSimilarList.appendChild(fragment);
 }());
 
-overlay.classList.remove(`hidden`);
-similarWizards.classList.remove(`hidden`);
+// УСТАНОВКА СЛУШАТЕЛЕЙ НА ОКНО НАСТРОЙКИ ИГРОКА
 
-let overlayClose = overlay.querySelector(`.setup-close`);
-overlayClose.addEventListener(`click`, function () {
-  overlay.classList.add(`hidden`);
+const ENTER_KEYCODE = 13;
+const ESC_KEYCODE = 27;
+
+let setup = document.querySelector(`.setup`);
+let setupOpen = document.querySelector(`.setup-open`);
+let setupClose = setup.querySelector(`.setup-close`);
+let inputWizardName = setup.querySelector(`.setup-user-name`);
+let setupPlayer = setup.querySelector(`.setup-player`);
+
+setupOpen.addEventListener(`click`, openPopup);
+setupOpen.addEventListener(`keydown`, function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    openPopup();
+  }
 });
+
+function openPopup() {
+  setup.classList.remove(`hidden`);
+  similarWizards.classList.remove(`hidden`);
+
+  setupClose.addEventListener(`click`, closePopup);
+  document.addEventListener(`keydown`, onPopupEscPress);
+  setupClose.addEventListener(`keydown`, onEnterClose);
+
+  inputWizardName.addEventListener(`focus`, function () {
+    document.removeEventListener(`keydown`, onPopupEscPress);
+    inputWizardName.addEventListener(`blur`, openPopup);
+  });
+  setupPlayer.addEventListener(`click`, onClickChangeColor);
+}
+
+function closePopup() {
+  setup.classList.add(`hidden`);
+  similarWizards.classList.add(`hidden`);
+
+  setupClose.removeEventListener(`click`, closePopup);
+  document.removeEventListener(`keydown`, onPopupEscPress);
+  setupClose.removeEventListener(`keydown`, onEnterClose);
+  inputWizardName.removeEventListener(`blur`, openPopup);
+  setupPlayer.removeEventListener(`click`, onClickChangeColor);
+}
+
+function onPopupEscPress(evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
+}
+function onEnterClose(evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closePopup();
+  }
+}
+
+function onClickChangeColor(evt) { // смена цвета по клику, на глаза, мантию, и фаербол
+  let changeColor = (currentElem) => {
+    switch (currentElem) {
+
+      case `setup-fireball`:
+        let rgbToHex = (rgb) =>
+          `#` + ((1 << 24) + (Number(rgb.match(/\d{1,3}/gi)[0]) << 16) +
+          (Number(rgb.match(/\d{1,3}/gi)[1]) << 8) +
+          Number(rgb.match(/\d{1,3}/gi)[2])).toString(16).slice(1);
+
+        if (evt.target.parentNode.style.backgroundColor) {
+          // eslint-disable-next-line no-var
+          var hex = rgbToHex(evt.target.parentNode.style.backgroundColor);
+        }
+        if (fireballColors.indexOf(hex) < 0) {
+          evt.target.parentNode.style.backgroundColor = fireballColors[1];
+          break;
+        } else {
+          let i = fireballColors.indexOf(hex);
+          i == fireballColors.length - 1 ? i = -1 : false;
+          evt.target.parentNode.style.backgroundColor = fireballColors[i + 1];
+          break;
+        }
+
+      case `wizard-coat`:
+        let j = coatColors.indexOf(evt.target.style.fill);
+        j == coatColors.length - 1 ? j = -1 : false;
+        evt.target.style.fill = coatColors[j + 1];
+        break;
+
+      case `wizard-eyes`:
+        if (eyeColors.indexOf(evt.target.style.fill) < 0) {
+          evt.target.style.fill = eyeColors[1];
+          break;
+        } else {
+          let k = eyeColors.indexOf(evt.target.style.fill);
+          k == eyeColors.length - 1 ? k = -1 : false;
+          evt.target.style.fill = eyeColors[k + 1];
+          break;
+        }
+    }
+  };
+
+  if (evt.target.classList.value.match(/wizard-coat|wizard-eyes|setup-fireball/)) {
+    changeColor(evt.target.classList.value);
+  }
+}
