@@ -29,7 +29,9 @@ button {
   border: 0;
 }
 
-*[tabindex]:focus, button:focus, input:focus {
+*[tabindex]:focus,
+button:focus,
+input:focus {
   outline: none;
   box-shadow: 0 0 10px #fff000;
 }
@@ -228,7 +230,7 @@ main {
   left: -1200em;
 }
 
-input[type=radio]:checked + .reviews-filter-item {
+input[type=radio]:checked+.reviews-filter-item {
   margin-right: 35px;
   margin-left: -15px;
   padding: 0 15px;
@@ -306,15 +308,19 @@ input[type=radio]:checked + .reviews-filter-item {
 .review-rating-one {
   width: 40px;
 }
+
 .review-rating-two {
   width: 80px;
 }
+
 .review-rating-three {
   width: 120px;
 }
+
 .review-rating-four {
   width: 160px;
 }
+
 .review-rating-five {
   width: 200px;
 }
@@ -481,16 +487,28 @@ footer p {
   width: 40px;
 }
 
-.review-mark-label-1 { width: 40px; }
-.review-mark-label-2 { width: 80px; }
-.review-mark-label-3 { width: 120px; }
-.review-mark-label-4 { width: 160px; }
+.review-mark-label-1 {
+  width: 40px;
+}
+
+.review-mark-label-2 {
+  width: 80px;
+}
+
+.review-mark-label-3 {
+  width: 120px;
+}
+
+.review-mark-label-4 {
+  width: 160px;
+}
+
 .review-mark-label-5 {
   background: url('../img/icon-star-inactive-form.png') repeat-x;
   width: 200px;
 }
 
-input[type=radio]:checked + .review-mark-label {
+input[type=radio]:checked+.review-mark-label {
   background: url('../img/icon-star.png') repeat-x;
 }
 
@@ -721,6 +739,10 @@ input[type=radio]:checked + .review-mark-label {
   border-right-width: 1px;
 }
 
+.setup-artifacts-cell img {
+  margin-top: 7px;
+}
+
 .setup-footer {
   border-top: 10px solid #1cb34d;
   padding-bottom: 20px;
@@ -864,8 +886,8 @@ input[type=radio]:checked + .review-mark-label {
   position: absolute;
   z-index: 0;
   opacity: 0;
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
 
   left: 0;
   top: 0;
