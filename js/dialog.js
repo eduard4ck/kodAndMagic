@@ -19,8 +19,8 @@
 
     function onMouseMove(moveEvt) {
       let endCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
+        x: moveEvt.pageX,
+        y: moveEvt.pageY
       };
 
       setup.style.left = shift.x + endCoords.x + `px`;

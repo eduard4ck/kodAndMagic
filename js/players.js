@@ -90,7 +90,7 @@
     }
   }());
 
-  (function addSimilarPlayers() { // добавляем похожих игроков в блок с другими игроками
+  function addSimilarPlayers() { // добавляем похожих игроков в блок с другими игроками
     let fragment = document.createDocumentFragment();
     for (let i = 0; i < window.players.players.length; i++) {
       let newWizard = window.players.wizardTemplate.cloneNode(true);
@@ -102,6 +102,6 @@
       fragment.appendChild(newWizard);
     }
     window.players.setupSimilarList.appendChild(fragment);
-  }());
+  }
 
 }());

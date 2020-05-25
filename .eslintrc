@@ -10,5 +10,6 @@
   "extends": "htmlacademy/es6",
   "rules": {
     //"quotes": "off"
+    "no-return-assign": "off"
   }
 }
