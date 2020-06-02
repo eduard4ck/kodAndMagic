@@ -10,6 +10,7 @@
   "extends": "htmlacademy/es6",
   "rules": {
     //"quotes": "off"
-    "no-return-assign": "off"
+    "no-return-assign": "off",
+    "no-unused-expressions": "off"
   }
 }

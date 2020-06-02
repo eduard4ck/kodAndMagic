@@ -1,7 +1,10 @@
 // УСТАНОВКА СЛУШАТЕЛЕЙ НА ОКНО НАСТРОЙКИ ИГРОКА
 
-window.ENTER_KEYCODE = 13;
-window.ESC_KEYCODE = 27;
+window.Keyboard = {
+  ESC_KEYCODE: 27,
+  ENTER_KEYCODE: 13
+};
+
 
 (function () {
 
@@ -59,12 +62,12 @@ window.ESC_KEYCODE = 27;
   }
 
   function onPopupEscPress(evt) {
-    if (evt.keyCode === window.ESC_KEYCODE) {
+    if (evt.keyCode === Keyboard.ESC_KEYCODE) {
       closePopup();
     }
   }
   function onEnterClose(evt) {
-    if (evt.keyCode === window.ENTER_KEYCODE) {
+    if (evt.keyCode === Keyboard.ENTER_KEYCODE) {
       closePopup();
     }
   }
@@ -77,13 +80,19 @@ window.ESC_KEYCODE = 27;
 
   function onClickChangeColor(evt) { // смена цвета по клику, на глаза, мантию, и фаербол
 
+    let classToValue = {
+      'wizard-coat': `input[name="coat-color"]`,
+      'wizard-eyes': `input[name="eyes-color"]`
+    };
+
     let fillElement = (target, color) => {
       target.style.fill = color;
-      if (target.classList.contains(`wizard-coat`)) {
-        window.setup.setup.querySelector(`input[name="coat-color"]`).value = color;
-      } else if (target.classList.contains(`wizard-eyes`)) {
-        window.setup.setup.querySelector(`input[name="eyes-color"]`).value = color;
-      }
+      window.setup.setup.querySelector(classToValue[target.classList.value]).value = color;
+
+      window.deboubce(() => {
+        let wizards = window.sortSimilar();
+        appendWizards(wizards);
+      });
     };
     let changeElemBackground = (target, color) => {
       target.style.backgroundColor = color;
@@ -92,6 +101,7 @@ window.ESC_KEYCODE = 27;
 
     // regexExample = target.classList.value.match(/wizard-coat|wizard-eyes|setup-fireball/)
     let w = window.players.options;
+
     if (evt.target.classList.contains(`wizard-coat`)) {
       window.colorizeElement(evt.target, w.coatColors, fillElement);
     } else if (evt.target.classList.contains(`wizard-eyes`)) {
@@ -121,30 +131,35 @@ window.ESC_KEYCODE = 27;
   }
 
   function successHandler(wizards) {
+    window.players.fullPlayers = wizards.slice();
+    wizards = window.sortSimilar();
+    appendWizards(wizards);
+  }
+
+  function appendWizards(wizards) {
     let fragment = document.createDocumentFragment();
     const WIZARDS_QUANTITY = 4;
     let fourWizards = [];
+    window.players.setupSimilarList.innerHTML = ``;
 
-    for (let i = 0; i < WIZARDS_QUANTITY; i++) { // выбираем 4 рандомных волшебника
-      let randomNumber = window.getRandomInt(0, wizards.length);
-      fourWizards.push(wizards[randomNumber]);
-      wizards.splice(randomNumber, 1);
+    for (let i = 0; i < WIZARDS_QUANTITY; i++) { // выбираем 4 первых похожих волшебника
+      fourWizards.push(wizards[i]);
     }
 
-    for (let i = 0; i < fourWizards.length; i++) { // добавляем их в list волшебников
+    fourWizards.forEach((wizard) => { // добавляем их в list волшебников
       let newWizard = window.players.wizardTemplate.cloneNode(true);
-      newWizard.querySelector(`p`).textContent = fourWizards[i].name;
-      newWizard.querySelector(`.wizard-coat`).style.fill = fourWizards[i].colorCoat;
-      newWizard.querySelector(`.wizard-eyes`).style.fill = fourWizards[i].colorEyes;
+      newWizard.querySelector(`p`).textContent = wizard.name;
+      newWizard.querySelector(`.wizard-coat`).style.fill = wizard.colorCoat;
+      newWizard.querySelector(`.wizard-eyes`).style.fill = wizard.colorEyes;
       fragment.appendChild(newWizard);
-    }
+    });
     window.players.setupSimilarList.appendChild(fragment);
   }
 
   window.load(errorHandler, successHandler); // загрузить волшебников через xhr
   window.setup.setupOpen.addEventListener(`click`, openPopup);
   window.setup.setupOpen.addEventListener(`keydown`, function (evt) {
-    if (evt.keyCode === window.ENTER_KEYCODE) {
+    if (evt.keyCode === Keyboard.ENTER_KEYCODE) {
       openPopup();
     }
   });

@@ -4,6 +4,7 @@
     wizardTemplate: document.querySelector(`#similar-wizard-template`).content.querySelector(`.setup-similar-item`),
     similarWizards: document.querySelector(`.setup-similar`),
     setupSimilarList: document.querySelector(`.setup-similar .setup-similar-list`),
+    fullPlayers: [],
     players: [],
     options: {
       names: [
@@ -90,17 +91,18 @@
     }
   }());
 
+
   function addSimilarPlayers() { // добавляем похожих игроков в блок с другими игроками
     let fragment = document.createDocumentFragment();
-    for (let i = 0; i < window.players.players.length; i++) {
+
+    window.players.players.forEach((player) => {
       let newWizard = window.players.wizardTemplate.cloneNode(true);
-
-      newWizard.querySelector(`p`).textContent = window.players.players[i].name;
-      newWizard.querySelector(`.wizard-coat`).style.fill = window.players.players[i].coatColor;
-      newWizard.querySelector(`.wizard-eyes`).style.fill = window.players.players[i].eyesColor;
-
+      newWizard.querySelector(`p`).textContent = player.name;
+      newWizard.querySelector(`.wizard-coat`).style.fill = player.coatColor;
+      newWizard.querySelector(`.wizard-eyes`).style.fill = player.eyesColor;
       fragment.appendChild(newWizard);
-    }
+    });
+
     window.players.setupSimilarList.appendChild(fragment);
   }
 

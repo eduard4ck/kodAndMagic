@@ -21,3 +21,4 @@ window.colorizeElement = function (target, colors, cb) {
   i = i === colors.length - 1 ? -1 : i;
   cb(target, colors[i + 1]);
 };
+

@@ -43,14 +43,14 @@ window.stat = {
     }());
 
     function getMaxElement() { // узнаём худшее время среди игроков
-      let maxTime = -1;
-      for (let i = 0; i < times.length; i++) {
-        if (times[i] > maxTime) {
-          maxTime = times[i];
-          // eslint-disable-next-line no-var
-          var maxIndex = i;
+      let maxIndex;
+      times.reduce((acc, playerTime, i) => {
+        if (playerTime > acc) {
+          acc = playerTime; maxIndex = i;
         }
-      }
+        return acc;
+      }, -1);
+
       return maxIndex;
     }
 
@@ -76,7 +76,6 @@ window.stat = {
       ctx.fillText(text, x - (ctx.measureText(text).width) / 2, HEIGHT / 3.9);
 
       let worstTime = (times[getMaxElement()] / 1000).toFixed(1);
-      // eslint-disable-next-line eqeqeq
       if (worstTime.split(``)[worstTime.length - 1] == 0) {
         worstTime = Math.floor(times[getMaxElement()] / 1000);
       }
