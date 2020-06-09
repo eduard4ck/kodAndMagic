@@ -1,16 +1,11 @@
 (function () {
 
   let dialogHandle = window.setup.setup.querySelector(`.upload`);
-  let typeFile = window.setup.setup.querySelector(`input[type="file"]`);
-
-  typeFile.addEventListener(`click`, function (evt) { // не открывать FileUpload при перетаскивании
-    evt.preventDefault();
-  });
-
 
   dialogHandle.addEventListener(`mousedown`, function (evt) { // перетаскивание окна setup по экрану
     let setup = window.setup.setup;
     let setupCoords = setup.getBoundingClientRect();
+    let dragged = false;
 
     let shift = {
       x: (setupCoords.x + setupCoords.width / 2) - evt.clientX,
@@ -25,9 +20,18 @@
 
       setup.style.left = shift.x + endCoords.x + `px`;
       setup.style.top = shift.y + endCoords.y + `px`;
+      !dragged ? setTimeout(() => dragged = true, 1000) : false; // таймаут при ложном драге
     }
 
     function onMouseUp(upEvt) {
+      if (dragged) { // предотвратить открытие typeFile после перетаскивания
+        let preventClick = (clickEvt) => {
+          clickEvt.preventDefault();
+          document.removeEventListener(`click`, preventClick);
+        };
+        document.addEventListener(`click`, preventClick);
+      }
+
       upEvt.preventDefault();
       document.removeEventListener(`mousemove`, onMouseMove);
       document.removeEventListener(`mouseup`, onMouseUp);
@@ -36,7 +40,7 @@
 
     document.addEventListener(`mousemove`, onMouseMove);
     document.addEventListener(`mouseup`, onMouseUp);
-  });
+  })
 
 }());
 
@@ -86,7 +90,6 @@
     } else if (closestCell.childNodes.length > 0) {
       closestCell.style.backgroundColor = `rgba(192, 57, 43, 0.5)`; // red
     }
-
   }
 
   function dragover(evt) {

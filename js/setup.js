@@ -88,11 +88,10 @@ window.Keyboard = {
     let fillElement = (target, color) => {
       target.style.fill = color;
       window.setup.setup.querySelector(classToValue[target.classList.value]).value = color;
-
-      window.deboubce(() => {
+      window.debounce(() => {
         let wizards = window.sortSimilar();
         appendWizards(wizards);
-      });
+      }, 700)();
     };
     let changeElemBackground = (target, color) => {
       target.style.backgroundColor = color;
